@@ -22,9 +22,9 @@
     --muted:     #6b7a99;
     --card-glow: 0 2px 16px rgba(0,112,224,0.07);
   }
- 
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   body {
     font-family: 'Barlow', sans-serif;
     background: var(--bg);
@@ -32,7 +32,7 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
- 
+
   /* Grid noise texture overlay */
   body::before {
     content: '';
@@ -44,17 +44,18 @@
     pointer-events: none;
     z-index: 0;
   }
- 
+
   /* ─── TOPBAR ─────────────────────────────────────────── */
   .topbar {
     position: sticky; top: 0; z-index: 100;
     background: rgba(255,255,255,0.92);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    padding: 14px 28px;
+    padding: 12px 20px;
     display: flex; align-items: center; gap: 16px;
     justify-content: space-between;
     box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    width: 100%;
   }
   .topbar-left { display: flex; align-items: center; gap: 14px; }
   .logo-mark {
@@ -69,10 +70,10 @@
   }
   .topbar-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; color: var(--text); }
   .topbar-sub { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
- 
+
   .topbar-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .ctrl-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
- 
+
   .date-input {
     background: var(--bg3);
     border: 1px solid var(--border);
@@ -85,7 +86,7 @@
     transition: border-color .2s;
   }
   .date-input:focus { border-color: var(--accent); }
- 
+
   .btn {
     padding: 8px 18px;
     border: none; border-radius: 6px;
@@ -105,7 +106,7 @@
   .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
   .btn-secondary.active { border-color: var(--green); color: var(--green); }
- 
+
   .live-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: var(--green);
@@ -113,10 +114,10 @@
     animation: pulse 1.6s infinite;
   }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
- 
+
   /* ─── MAIN LAYOUT ────────────────────────────────────── */
-  .main { position: relative; z-index: 1; padding: 24px 28px; max-width: 1600px; margin: auto; }
- 
+  .main { position: relative; z-index: 1; padding: 18px 20px; width: 100%; box-sizing: border-box; }
+
   /* ─── STATUS BAR ─────────────────────────────────────── */
   .status-bar {
     display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
@@ -131,7 +132,7 @@
     font-family: 'JetBrains Mono', monospace;
   }
   .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
- 
+
   /* ─── KPI GRID ───────────────────────────────────────── */
   .kpi-grid {
     display: grid;
@@ -140,7 +141,7 @@
     margin-bottom: 20px;
   }
   @media(max-width:900px){ .kpi-grid{ grid-template-columns: repeat(2,1fr); } }
- 
+
   .kpi-card {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -165,7 +166,7 @@
   .kpi-card.c6::after { background: linear-gradient(90deg,var(--red),transparent); }
   .kpi-card.c7::after { background: linear-gradient(90deg,#00bcd4,transparent); }
   .kpi-card.c8::after { background: linear-gradient(90deg,#ec407a,transparent); }
- 
+
   .kpi-label {
     font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
     color: var(--muted); margin-bottom: 8px;
@@ -188,12 +189,12 @@
   .badge-ok { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
   .badge-warn { background: rgba(255,214,0,0.12); color: var(--yellow); border: 1px solid rgba(255,214,0,0.3); }
   .badge-crit { background: rgba(255,23,68,0.12); color: var(--red); border: 1px solid rgba(255,23,68,0.3); }
- 
+
   /* ─── 2-COL GRID ─────────────────────────────────────── */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .one-col { margin-bottom: 14px; }
   @media(max-width:900px){ .two-col{ grid-template-columns:1fr; } }
- 
+
   /* ─── CHART CARDS ────────────────────────────────────── */
   .chart-card {
     background: var(--bg2);
@@ -216,11 +217,11 @@
   }
   .chart-meta { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
   .chart-body { padding: 0; }
- 
+
   /* ─── GAUGE SECTION ──────────────────────────────────── */
   .gauge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
   @media(max-width:900px){ .gauge-grid{grid-template-columns:1fr;} }
- 
+
   /* ─── TABLE ──────────────────────────────────────────── */
   .tbl-wrap { overflow: auto; max-height: 280px; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
@@ -235,7 +236,7 @@
   td { padding: 7px 12px; border-bottom: 1px solid rgba(0,0,0,0.04); color: var(--text); }
   tr:hover td { background: rgba(0,112,224,0.03); }
   .tbl-show { display: none; }
- 
+
   /* ─── SECTION DIVIDER ────────────────────────────────── */
   .section-label {
     font-family: 'JetBrains Mono', monospace;
@@ -248,7 +249,7 @@
     content: ''; flex: 1;
     height: 1px; background: var(--border);
   }
- 
+
   /* ─── LOADING OVERLAY ────────────────────────────────── */
   #loadingOverlay {
     display: none;
@@ -268,7 +269,7 @@
   }
   @keyframes spin { to{transform:rotate(360deg)} }
   .loading-text { font-family: 'Rajdhani',sans-serif; font-size: 18px; color: var(--accent); letter-spacing: 2px; }
- 
+
   /* ─── ANOMALY LOG ────────────────────────────────────── */
   .anomaly-log { padding: 0 4px; max-height: 220px; overflow-y: auto; }
   .anomaly-item {
@@ -283,7 +284,7 @@
   .anom-swell { color: var(--accent2); }
   .anom-imb { color: var(--accent3); }
   .anom-detail { color: var(--text); }
- 
+
   /* ─── EMPTY STATE ────────────────────────────────────── */
   .empty-state {
     display: flex; align-items: center; justify-content: center;
@@ -293,7 +294,7 @@
     letter-spacing: 1px;
   }
   .empty-icon { font-size: 36px; opacity: .3; }
- 
+
   /* scrollbar */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -301,42 +302,31 @@
 </style>
 </head>
 <body>
- 
+
 <!-- LOADING -->
 <div id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">FETCHING TELEMETRY…</div>
 </div>
- 
+
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="logo-mark">V∞</div>
-    <div>
-      <div class="topbar-title">VOLTAGE ANALYTICS</div>
-      <div class="topbar-sub">Chiller Plant 1 · Power Quality Monitor</div>
-    </div>
-  </div>
   <div class="topbar-controls">
     <div class="live-dot" title="Live data connection"></div>
     <span class="ctrl-label">Date</span>
     <input type="date" id="reportDate" class="date-input">
-    <button class="btn btn-primary" onclick="generateReport()">▶ Analyze</button>
-    <button class="btn btn-secondary" id="tblBtn" onclick="toggleTable()">⊞ Table</button>
+    <button class="btn btn-primary" onclick="generateReport()">&#9654; Analyze</button>
+    <button class="btn btn-secondary" id="tblBtn" onclick="toggleTable()">&#8862; Table</button>
+  </div>
+  <div style="display:flex;gap:16px;align-items:center;">
+    <span id="statusTs" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
+    <span id="statusSamples" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">— samples</span>
   </div>
 </div>
- 
+
 <!-- MAIN -->
 <div class="main">
- 
-  <!-- STATUS BAR -->
-  <div class="status-bar" id="statusBar">
-    <div class="status-pill"><div class="status-dot" style="background:var(--muted)"></div>Device ID: 1250b550-5bdb-11f0-9b14-15d3b3a473c1</div>
-    <div class="status-pill"><div class="status-dot" style="background:var(--muted)"></div>Telemetry: chiller_plant_1</div>
-    <div class="status-pill" id="statusTs"><div class="status-dot" style="background:var(--muted)"></div>No data loaded</div>
-    <div class="status-pill" id="statusSamples"><div class="status-dot" style="background:var(--muted)"></div>— samples</div>
-  </div>
- 
+
   <!-- KPI ROW 1: LL Voltages -->
   <div class="section-label">Line-to-Line Voltages (LL)</div>
   <div class="kpi-grid" id="kpiLL">
@@ -345,7 +335,7 @@
     <div class="kpi-card c3"><div class="kpi-label">Voltage BR</div><div class="kpi-value" id="kv-br">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-br">—</div></div>
     <div class="kpi-card c4"><div class="kpi-label">Avg LL Voltage</div><div class="kpi-value" id="kv-avll">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-avll">—</div></div>
   </div>
- 
+
   <!-- KPI ROW 2: LN Voltages -->
   <div class="section-label">Line-to-Neutral Voltages (LN)</div>
   <div class="kpi-grid" id="kpiLN">
@@ -354,7 +344,7 @@
     <div class="kpi-card c7"><div class="kpi-label">Voltage BN</div><div class="kpi-value" id="kv-bn">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-bn">—</div></div>
     <div class="kpi-card c8"><div class="kpi-label">Avg LN Voltage</div><div class="kpi-value" id="kv-avln">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-avln">—</div></div>
   </div>
- 
+
   <!-- GAUGES -->
   <div class="section-label">System Health Gauges</div>
   <div class="gauge-grid">
@@ -380,7 +370,7 @@
       <div class="chart-body"><div id="gaugeRatio" style="height:200px"></div></div>
     </div>
   </div>
- 
+
   <!-- TREND CHARTS ROW 1 -->
   <div class="section-label">Voltage Trends</div>
   <div class="one-col">
@@ -401,7 +391,7 @@
       <div class="chart-body"><div id="chartLN" style="height:260px"></div></div>
     </div>
   </div>
- 
+
   <!-- ANOMALY + DIST ROW -->
   <div class="two-col">
     <div class="chart-card">
@@ -419,7 +409,7 @@
       <div class="chart-body"><div id="chartSagSwell" style="height:260px"></div></div>
     </div>
   </div>
- 
+
   <!-- IMBALANCE TRENDS + HEATMAP -->
   <div class="two-col">
     <div class="chart-card">
@@ -437,7 +427,7 @@
       <div class="chart-body"><div id="chartDev" style="height:260px"></div></div>
     </div>
   </div>
- 
+
   <!-- ANOMALY LOG -->
   <div class="section-label">Anomaly Event Log</div>
   <div class="chart-card one-col">
@@ -449,7 +439,7 @@
       <div class="empty-state"><div class="empty-icon">⚡</div>Generate a report to view anomaly events</div>
     </div>
   </div>
- 
+
   <!-- RAW TABLE -->
   <div class="chart-card one-col tbl-show" id="rawTableCard" style="margin-top:14px;">
     <div class="chart-header">
@@ -470,22 +460,22 @@
       </table>
     </div>
   </div>
- 
+
 </div><!-- /main -->
- 
+
 <script>
 const DEVICE_ID = "1250b550-5bdb-11f0-9b14-15d3b3a473c1";
 const API_BASE   = "https://plantwiz.pimateck.in/api";
 const TELEMETRY  = "chiller_plant_1";
 const NOMINAL_LN = 230;
 const NOMINAL_LL = 415;
- 
+
 const qs  = new URLSearchParams(location.search);
 const JWT = qs.get("token") || "";
- 
+
 let lastData  = [];
 let tableOpen = false;
- 
+
 // ── Default date ──────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   const d = document.getElementById("reportDate");
@@ -494,7 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
     d.value = today;
   }
 });
- 
+
 // ── Fetch ─────────────────────────────────────────────────────────────────
 async function fetchTelemetry(from, to) {
   const start = new Date(from).getTime();
@@ -505,11 +495,11 @@ async function fetchTelemetry(from, to) {
   const res   = await fetch(url, { headers: hdrs });
   if (!res.ok) throw new Error("HTTP " + res.status);
   const json  = await res.json();
- 
+
   // The API returns { chiller_plant_1: [{ts, value: '{...json...}'}] }
   const rows  = json[TELEMETRY] || [];
   const parsed = [];
- 
+
   rows.forEach(r => {
     try {
       const obj = typeof r.value === "string" ? JSON.parse(r.value) : r.value;
@@ -531,25 +521,25 @@ async function fetchTelemetry(from, to) {
   return parsed.sort((a,b) => a.ts - b.ts);
 }
 function num(v) { return parseFloat(v); }
- 
+
 // ── Imbalance helper ──────────────────────────────────────────────────────
 function imbalance(a,b,c) {
   const avg = (a+b+c)/3;
   if (!avg) return 0;
   return ((Math.max(a,b,c) - Math.min(a,b,c)) / avg) * 100;
 }
- 
+
 // ── Analyse ───────────────────────────────────────────────────────────────
 function analyse(data) {
   const sag=[], swell=[], anomalies=[];
   const imbLL=[], imbLN=[];
- 
+
   data.forEach(d => {
     const iLL = imbalance(d.V_RY, d.V_YB, d.V_BR);
     const iLN = imbalance(d.V_RN, d.V_YN, d.V_BN);
     imbLL.push({ts:d.ts, v:iLL});
     imbLN.push({ts:d.ts, v:iLN});
- 
+
     // Sag/Swell on LN phases
     [["RN",d.V_RN],["YN",d.V_YN],["BN",d.V_BN]].forEach(([ph,v]) => {
       const pu = v/NOMINAL_LN;
@@ -561,7 +551,7 @@ function analyse(data) {
   });
   return {sag, swell, imbLL, imbLN, anomalies};
 }
- 
+
 // ── Plotly shared config ───────────────────────────────────────────────────
 const PLY = {
   font: { family:"'JetBrains Mono','Barlow',sans-serif", color:"#6b7a99", size:11 },
@@ -574,14 +564,14 @@ const PLY = {
            tickfont:{size:10}, zeroline:false },
 };
 const PLY_CFG = { displayModeBar:false, responsive:true };
- 
+
 function mkLayout(extra={}) {
   return Object.assign({}, PLY, extra, {
     xaxis: Object.assign({},PLY.xaxis,extra.xaxis||{}),
     yaxis: Object.assign({},PLY.yaxis,extra.yaxis||{}),
   });
 }
- 
+
 // ── Sparkline helper for KPI ─────────────────────────────────────────────
 function badgeFor(val, nom, tol=0.05) {
   const d = Math.abs(val-nom)/nom;
@@ -589,36 +579,34 @@ function badgeFor(val, nom, tol=0.05) {
   if (d<=tol*2)  return `<span class="kpi-badge badge-warn">⚠ MARGINAL</span>`;
   return `<span class="kpi-badge badge-crit">✕ DEVIATION</span>`;
 }
- 
+
 // ── GENERATE ──────────────────────────────────────────────────────────────
 async function generateReport() {
   const dateVal = document.getElementById("reportDate").value;
   if (!dateVal) { alert("Please select a date"); return; }
- 
+
   showLoading(true);
   try {
     const from = dateVal + "T00:00:00";
     const to   = dateVal + "T23:59:59";
     const data = await fetchTelemetry(from, to);
     lastData = data;
- 
+
     if (!data.length) {
       alert("No data found for selected date.");
       showLoading(false);
       return;
     }
- 
+
     const {sag, swell, imbLL, imbLN, anomalies} = analyse(data);
     const N = data.length;
     const ts = data.map(d=>new Date(d.ts));
- 
+
     // ── Status bar update ──────────────────────────────────────────────────
-    document.getElementById("statusTs").innerHTML =
-      `<div class="status-dot" style="background:var(--green)"></div>` +
-      `${new Date(data[0].ts).toLocaleTimeString()} → ${new Date(data[N-1].ts).toLocaleTimeString()}`;
-    document.getElementById("statusSamples").innerHTML =
-      `<div class="status-dot" style="background:var(--accent)"></div>${N.toLocaleString()} samples`;
- 
+    document.getElementById("statusTs").textContent =
+      `${new Date(data[0].ts).toLocaleTimeString()} — ${new Date(data[N-1].ts).toLocaleTimeString()}`;
+    document.getElementById("statusSamples").textContent = `${N.toLocaleString()} samples`;
+
     // ── KPI latest ────────────────────────────────────────────────────────
     const last = data[N-1];
     const first = data[0];
@@ -631,7 +619,7 @@ async function generateReport() {
     }
     const stats = {};
     ["V_RY","V_YB","V_BR","AvLL","V_RN","V_YN","V_BN","AvLN"].forEach(k=>stats[k]=stat(k));
- 
+
     function setKPI(id, val, nom, key) {
       const s = stats[key];
       document.getElementById(`kv-${id}`).innerHTML = `${val.toFixed(1)}<span class="kpi-unit">V</span>`;
@@ -647,35 +635,37 @@ async function generateReport() {
     setKPI("yn", last.V_YN, NOMINAL_LN, "V_YN");
     setKPI("bn", last.V_BN, NOMINAL_LN, "V_BN");
     setKPI("avln",last.AvLN,NOMINAL_LN,"AvLN");
- 
+
     // ── Gauges ─────────────────────────────────────────────────────────────
     const maxImbLL = Math.max(...imbLL.map(x=>x.v));
     const maxImbLN = Math.max(...imbLN.map(x=>x.v));
     const ratio    = last.AvLL / last.AvLN;
- 
+
     function gaugePlot(elId, value, max, title, colorRanges) {
+      const barColor = value < colorRanges[0] ? "#00a854" : value < colorRanges[1] ? "#d97706" : "#dc2626";
       Plotly.newPlot(elId, [{
         type:"indicator", mode:"gauge+number",
         value: +value.toFixed(3),
         gauge:{
-          axis:{range:[0,max], tickfont:{size:9}, tickcolor:"#6b7a99"},
-          bar:{color: value<colorRanges[0] ? "#00e676" : value<colorRanges[1] ? "#ffd600" : "#ff1744", thickness:0.25},
-          bgcolor:"rgba(255,255,255,0.03)",
-          borderwidth:0,
+          axis:{range:[0,max], tickfont:{size:9,color:"#6b7a99"}, tickcolor:"#6b7a99"},
+          bar:{color: barColor, thickness:0.28},
+          bgcolor:"rgba(0,0,0,0.03)",
+          borderwidth:1,
+          bordercolor:"rgba(0,0,0,0.08)",
           steps:[
-            {range:[0,colorRanges[0]],             color:"rgba(0,230,118,0.06)"},
-            {range:[colorRanges[0],colorRanges[1]], color:"rgba(255,214,0,0.06)"},
-            {range:[colorRanges[1],max],             color:"rgba(255,23,68,0.06)"},
+            {range:[0,colorRanges[0]],             color:"rgba(0,168,84,0.15)"},
+            {range:[colorRanges[0],colorRanges[1]], color:"rgba(217,119,6,0.15)"},
+            {range:[colorRanges[1],max],             color:"rgba(220,38,38,0.15)"},
           ],
-          threshold:{line:{color:"rgba(255,255,255,0.3)",width:2},value}
+          threshold:{line:{color:barColor,width:3},value}
         },
-        number:{font:{family:"'Rajdhani',sans-serif",size:28,color:"#1a2340"}, suffix:title},
+        number:{font:{family:"'Rajdhani',sans-serif",size:30,color:"#1a2340"}, suffix:title},
       }], mkLayout({margin:{t:20,b:10,l:30,r:30},height:200}), PLY_CFG);
     }
     gaugePlot("gaugeLL", maxImbLL, 5, "%", [1,2]);
     gaugePlot("gaugeLN", maxImbLN, 5, "%", [1,2]);
     gaugePlot("gaugeRatio", ratio, 2, "", [1.68,1.80]);
- 
+
     document.getElementById("llImb-badge").innerHTML = maxImbLL<1
       ? `<span class="kpi-badge badge-ok">Balanced</span>`
       : maxImbLL<2
@@ -686,7 +676,7 @@ async function generateReport() {
       : maxImbLN<2
       ? `<span class="kpi-badge badge-warn">Marginal</span>`
       : `<span class="kpi-badge badge-crit">Unbalanced</span>`;
- 
+
     // ── LL Trend ──────────────────────────────────────────────────────────
     Plotly.newPlot("chartLL", [
       {x:ts, y:data.map(d=>d.V_RY),  name:"V RY",  mode:"lines", line:{color:"#0070e0",width:1.5}},
@@ -694,7 +684,7 @@ async function generateReport() {
       {x:ts, y:data.map(d=>d.V_BR),  name:"V BR",  mode:"lines", line:{color:"#7c3aed",width:1.5}},
       {x:ts, y:data.map(d=>d.AvLL),  name:"Avg LL",mode:"lines", line:{color:"#374151",width:1.5,dash:"dot"}},
     ], mkLayout({yaxis:{title:{text:"Voltage (V)",font:{size:10}}}}), PLY_CFG);
- 
+
     // ── LN Trend ──────────────────────────────────────────────────────────
     const lnShapes = [
       {type:"line",x0:ts[0],x1:ts[N-1],y0:NOMINAL_LN*0.9,y1:NOMINAL_LN*0.9,
@@ -708,7 +698,7 @@ async function generateReport() {
       {x:ts, y:data.map(d=>d.V_BN),  name:"V BN",  mode:"lines", line:{color:"#7c3aed",width:1.5}},
       {x:ts, y:data.map(d=>d.AvLN),  name:"Avg LN",mode:"lines", line:{color:"#374151",width:1.5,dash:"dot"}},
     ], mkLayout({shapes:lnShapes,yaxis:{title:{text:"Voltage (V)",font:{size:10}}}}), PLY_CFG);
- 
+
     // ── Box plot ──────────────────────────────────────────────────────────
     Plotly.newPlot("chartBox", [
       {y:data.map(d=>d.V_RY), name:"RY", type:"box", marker:{color:"#0070e0"}, boxmean:true},
@@ -718,7 +708,7 @@ async function generateReport() {
       {y:data.map(d=>d.V_YN), name:"YN", type:"box", marker:{color:"#00a854"}, boxmean:true},
       {y:data.map(d=>d.V_BN), name:"BN", type:"box", marker:{color:"#be185d"}, boxmean:true},
     ], mkLayout({boxmode:"group"}), PLY_CFG);
- 
+
     // ── Sag/Swell by hour ────────────────────────────────────────────────
     const hrs = {};
     sag.forEach(e=>{const h=new Date(e.ts).getHours();hrs[h]=hrs[h]||{s:0,sw:0};hrs[h].s++;});
@@ -730,7 +720,7 @@ async function generateReport() {
     ], mkLayout({barmode:"group"}), PLY_CFG);
     document.getElementById("sagSwellMeta").textContent =
       `${sag.length} sags · ${swell.length} swells`;
- 
+
     // ── Imbalance trend ──────────────────────────────────────────────────
     const imbShape = {type:"line",x0:ts[0],x1:ts[N-1],y0:2,y1:2,
       line:{color:"rgba(220,38,38,0.5)",dash:"dot",width:1}};
@@ -740,7 +730,7 @@ async function generateReport() {
       {x:ts, y:imbLN.map(x=>+x.v.toFixed(3)), name:"LN Imbalance %", mode:"lines",
        line:{color:"#d97706",width:1.5}},
     ], mkLayout({shapes:[imbShape],yaxis:{title:{text:"%",font:{size:10}}}}), PLY_CFG);
- 
+
     // ── Deviation from nominal ───────────────────────────────────────────
     Plotly.newPlot("chartDev",[
       {x:ts, y:data.map(d=>+(d.V_RN-NOMINAL_LN).toFixed(2)), name:"RN dev", mode:"lines", line:{color:"#0070e0",width:1}},
@@ -754,7 +744,7 @@ async function generateReport() {
       yaxis:{title:{text:"ΔV from 230V",font:{size:10}}, zeroline:true,
              zerolinecolor:"rgba(0,0,0,0.2)",zerolinewidth:1}
     }), PLY_CFG);
- 
+
     // ── Anomaly log ──────────────────────────────────────────────────────
     const log = document.getElementById("anomalyLog");
     document.getElementById("anomalyCount").textContent =
@@ -776,16 +766,16 @@ async function generateReport() {
         </div>`;
       }).join("");
     }
- 
+
     // ── Raw table ─────────────────────────────────────────────────────────
     if (tableOpen) renderTable(data, imbLL, imbLN);
- 
+
   } catch(err) {
     alert("Error fetching data: " + err.message);
   }
   showLoading(false);
 }
- 
+
 // ── Table ────────────────────────────────────────────────────────────────
 function toggleTable() {
   tableOpen = !tableOpen;
@@ -813,7 +803,7 @@ function renderTable(data, imbLL, imbLN) {
     </td>
   </tr>`).join("");
 }
- 
+
 function showLoading(v) {
   document.getElementById("loadingOverlay").classList.toggle("show", v);
 }
