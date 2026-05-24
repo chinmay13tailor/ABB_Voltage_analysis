@@ -1,814 +1,768 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>PF Analysis</title>
-
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltage Analytics — Chiller Plant 1</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg:        #f5f6fa;
+    --bg2:       #ffffff;
+    --bg3:       #f0f1f5;
+    --border:    #e3e6ef;
+    --accent:    #e65100;
+    --accent-b:  #1565c0;
+    --green:     #2e7d32;
+    --green-lt:  #e8f5e9;
+    --yellow:    #f57f17;
+    --yellow-lt: #fff8e1;
+    --red:       #c62828;
+    --red-lt:    #ffebee;
+    --text:      #111827;
+    --text2:     #374151;
+    --muted:     #9ca3af;
+    --shadow:    0 1px 4px rgba(0,0,0,0.08);
+    --shadow-md: 0 2px 12px rgba(0,0,0,0.10);
+  }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-font-family:'Poppins',sans-serif;
-background:#f4f6fa;
-color:#111827;
-overflow-x:hidden;
-}
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* ================= TOP BAR ================= */
+  /* ─── TOPBAR ─────────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex; align-items: center; gap: 12px;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    width: 100%;
+  }
 
-.topbar{
-width:100%;
-background:#fff;
-padding:14px 18px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border:1px solid #e5e7eb;
-border-radius:12px;
-margin-bottom:14px;
-}
+  .topbar-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ctrl-label { font-size: 12px; color: var(--muted); font-weight: 500; }
 
-.left-controls{
-display:flex;
-align-items:center;
-gap:12px;
-}
+  .date-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .date-input:focus { border-color: var(--accent-b); }
 
-.live-dot{
-width:10px;
-height:10px;
-border-radius:50%;
-background:#22c55e;
-box-shadow:0 0 0 4px rgba(34,197,94,0.2);
-}
+  .btn {
+    padding: 7px 18px;
+    border: none; border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600; font-size: 13px;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .btn-primary { background: var(--accent-b); color: #fff; }
+  .btn-primary:hover { background: #0d47a1; }
+  .btn-secondary { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent-b); color: var(--accent-b); }
+  .btn-secondary.active { border-color: var(--green); color: var(--green); }
 
-.date-input{
-padding:10px 14px;
-border:1px solid #d1d5db;
-border-radius:8px;
-font-family:'Poppins';
-font-size:13px;
-outline:none;
-background:#fff;
-}
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #43a047;
+    box-shadow: 0 0 0 2px #c8e6c9;
+    animation: pulse 1.6s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
 
-.btn{
-padding:10px 20px;
-border:none;
-border-radius:8px;
-font-family:'Poppins';
-font-weight:600;
-cursor:pointer;
-background:#2563eb;
-color:#fff;
-transition:0.2s;
-}
+  /* ─── MAIN LAYOUT ────────────────────────────────────── */
+  .main { padding: 16px 18px; width: 100%; box-sizing: border-box; }
 
-.btn:hover{
-background:#1d4ed8;
-}
+  /* ─── KPI GRID ───────────────────────────────────────── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  @media(max-width:900px){ .kpi-grid{ grid-template-columns: repeat(2,1fr); } }
 
-.status{
-font-size:12px;
-color:#64748b;
-}
+  .kpi-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow .2s;
+  }
+  .kpi-card:hover { box-shadow: var(--shadow-md); }
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 3px; bottom: 0;
+    border-radius: 8px 0 0 8px;
+  }
+  .kpi-card.c1::before { background: #1565c0; }
+  .kpi-card.c2::before { background: #2e7d32; }
+  .kpi-card.c3::before { background: #e65100; }
+  .kpi-card.c4::before { background: #f57f17; }
+  .kpi-card.c5::before { background: #6a1099; }
+  .kpi-card.c6::before { background: #c62828; }
+  .kpi-card.c7::before { background: #00838f; }
+  .kpi-card.c8::before { background: #ad1457; }
 
-/* ================= KPI ================= */
+  .kpi-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--muted); margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .kpi-value {
+    font-size: 28px; font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .kpi-unit { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 2px; }
+  .kpi-sub { font-size: 10px; color: var(--muted); margin-top: 6px; }
+  .kpi-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 7px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .badge-ok   { background: var(--green-lt);  color: var(--green); }
+  .badge-warn { background: var(--yellow-lt); color: var(--yellow); }
+  .badge-crit { background: var(--red-lt);    color: var(--red); }
 
-.kpi-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:14px;
-margin-bottom:14px;
-}
+  /* ─── 2-COL GRID ─────────────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .one-col  { margin-bottom: 10px; }
+  @media(max-width:900px){ .two-col{ grid-template-columns:1fr; } }
 
-.kpi-card{
-background:#fff;
-border-radius:12px;
-border:1px solid #e5e7eb;
-padding:18px;
-position:relative;
-overflow:hidden;
-min-height:135px;
-}
+  /* ─── CHART CARDS ────────────────────────────────────── */
+  .chart-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .chart-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chart-title {
+    font-weight: 600; font-size: 14px;
+    color: var(--text);
+    letter-spacing: 0;
+  }
+  .chart-meta { font-size: 11px; color: var(--muted); }
+  .chart-body { padding: 0; }
 
-.kpi-card::before{
-content:'';
-position:absolute;
-left:0;
-top:0;
-bottom:0;
-width:4px;
-}
+  /* ─── GAUGE SECTION ──────────────────────────────────── */
+  .gauge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+  @media(max-width:900px){ .gauge-grid{grid-template-columns:1fr;} }
 
-.c1::before{background:#22c55e;}
-.c2::before{background:#f59e0b;}
-.c3::before{background:#2563eb;}
-.c4::before{background:#ef4444;}
+  /* ─── TABLE ──────────────────────────────────────────── */
+  .tbl-wrap { overflow: auto; max-height: 280px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th {
+    background: #f8f9fc;
+    color: var(--muted);
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+    padding: 9px 12px; text-align: left;
+    position: sticky; top: 0;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  td { padding: 7px 12px; border-bottom: 1px solid #f3f4f6; color: var(--text2); font-size: 12px; }
+  tr:hover td { background: #f8f9ff; }
+  .tbl-show { display: none; }
 
-.kpi-title{
-font-size:11px;
-letter-spacing:2px;
-text-transform:uppercase;
-font-weight:600;
-color:#94a3b8;
-margin-bottom:12px;
-}
+  /* ─── SECTION DIVIDER ────────────────────────────────── */
+  .section-label {
+    font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+  }
 
-.kpi-value{
-font-size:42px;
-font-weight:700;
-line-height:1;
-margin-bottom:10px;
-}
+  /* ─── LOADING OVERLAY ────────────────────────────────── */
+  #loadingOverlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(245,246,250,0.88);
+    backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+  }
+  #loadingOverlay.show { display: flex; }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid #e3e6ef;
+    border-top-color: var(--accent-b);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .loading-text { font-size: 14px; font-weight: 600; color: var(--text2); letter-spacing: 1px; }
 
-.kpi-unit{
-font-size:18px;
-font-weight:500;
-color:#94a3b8;
-}
+  /* ─── ANOMALY LOG ────────────────────────────────────── */
+  .anomaly-log { padding: 0; max-height: 220px; overflow-y: auto; }
+  .anomaly-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 16px; border-bottom: 1px solid #f3f4f6;
+    font-size: 12px;
+  }
+  .anomaly-item:last-child { border-bottom: none; }
+  .anom-time  { color: var(--muted); flex-shrink: 0; width: 76px; font-family: 'Roboto Mono', monospace; }
+  .anom-type  { font-weight: 700; flex-shrink: 0; width: 50px; font-size: 11px; }
+  .anom-sag   { color: var(--yellow); }
+  .anom-swell { color: var(--accent); }
+  .anom-imb   { color: #6a1099; }
+  .anom-detail{ color: var(--text2); }
 
-.kpi-footer{
-display:flex;
-align-items:center;
-gap:8px;
-font-size:11px;
-color:#94a3b8;
-margin-top:10px;
-}
+  /* ─── EMPTY STATE ────────────────────────────────────── */
+  .empty-state {
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+    height: 160px; color: var(--muted);
+    font-size: 14px; font-weight: 500;
+  }
+  .empty-icon { font-size: 32px; opacity: .25; }
 
-.live-badge{
-background:#dcfce7;
-color:#15803d;
-padding:4px 8px;
-border-radius:6px;
-font-size:10px;
-font-weight:700;
-}
-
-/* ================= CHART ================= */
-
-.chart-card{
-background:#fff;
-border-radius:12px;
-border:1px solid #e5e7eb;
-margin-bottom:14px;
-overflow:hidden;
-}
-
-.chart-header{
-padding:14px 18px;
-border-bottom:1px solid #e5e7eb;
-font-size:20px;
-font-weight:700;
-}
-
-.chart-body{
-padding:10px;
-}
-
-#pfTrend{
-height:420px;
-}
-
-#pfScatter{
-height:420px;
-}
-
-/* ================= TABLE ================= */
-
-.table-card{
-background:#fff;
-border-radius:12px;
-border:1px solid #e5e7eb;
-overflow:hidden;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-thead{
-background:#f8fafc;
-}
-
-th{
-padding:12px;
-font-size:11px;
-letter-spacing:1px;
-text-transform:uppercase;
-text-align:left;
-border-bottom:1px solid #e5e7eb;
-color:#64748b;
-}
-
-td{
-padding:12px;
-font-size:13px;
-border-bottom:1px solid #f1f5f9;
-}
-
-tr:hover td{
-background:#f8fafc;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media(max-width:1200px){
-
-.kpi-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-}
-
-@media(max-width:768px){
-
-.kpi-grid{
-grid-template-columns:1fr;
-}
-
-.topbar{
-flex-direction:column;
-align-items:flex-start;
-gap:10px;
-}
-
-}
-
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
 </style>
 </head>
-
 <body>
 
-<!-- ================= TOP BAR ================= -->
+<!-- LOADING -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">FETCHING TELEMETRY…</div>
+</div>
 
+<!-- TOPBAR -->
 <div class="topbar">
-
-<div class="left-controls">
-
-<div class="live-dot"></div>
-
-<label style="font-size:13px;color:#64748b;">
-Date
-</label>
-
-<input type="date" id="reportDate" class="date-input">
-
-<button class="btn" onclick="generateReport()">
-▶ Analyze
-</button>
-
+  <div class="topbar-controls">
+    <div class="live-dot" title="Live data connection"></div>
+    <span class="ctrl-label">Date</span>
+    <input type="date" id="reportDate" class="date-input">
+    <button class="btn btn-primary" onclick="generateReport()">&#9654; Analyze</button>
+    <button class="btn btn-secondary" id="tblBtn" onclick="toggleTable()">&#8862; Table</button>
+  </div>
+  <div style="display:flex;gap:16px;align-items:center;">
+    <span id="statusTs" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
+    <span id="statusSamples" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">— samples</span>
+  </div>
 </div>
 
-<div class="status" id="statusText">
-Waiting for analysis...
-</div>
+<!-- MAIN -->
+<div class="main">
 
-</div>
+  <!-- KPI ROW 1: LL Voltages -->
+  <div class="section-label">Line-to-Line Voltages (LL)</div>
+  <div class="kpi-grid" id="kpiLL">
+    <div class="kpi-card c1"><div class="kpi-label">Voltage RY</div><div class="kpi-value" id="kv-ry">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-ry">—</div></div>
+    <div class="kpi-card c2"><div class="kpi-label">Voltage YB</div><div class="kpi-value" id="kv-yb">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-yb">—</div></div>
+    <div class="kpi-card c3"><div class="kpi-label">Voltage BR</div><div class="kpi-value" id="kv-br">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-br">—</div></div>
+    <div class="kpi-card c4"><div class="kpi-label">Avg LL Voltage</div><div class="kpi-value" id="kv-avll">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-avll">—</div></div>
+  </div>
 
-<!-- ================= KPI ================= -->
+  <!-- KPI ROW 2: LN Voltages -->
+  <div class="section-label">Line-to-Neutral Voltages (LN)</div>
+  <div class="kpi-grid" id="kpiLN">
+    <div class="kpi-card c5"><div class="kpi-label">Voltage RN</div><div class="kpi-value" id="kv-rn">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-rn">—</div></div>
+    <div class="kpi-card c6"><div class="kpi-label">Voltage YN</div><div class="kpi-value" id="kv-yn">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-yn">—</div></div>
+    <div class="kpi-card c7"><div class="kpi-label">Voltage BN</div><div class="kpi-value" id="kv-bn">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-bn">—</div></div>
+    <div class="kpi-card c8"><div class="kpi-label">Avg LN Voltage</div><div class="kpi-value" id="kv-avln">—<span class="kpi-unit">V</span></div><div class="kpi-sub" id="ks-avln">—</div></div>
+  </div>
 
-<div class="kpi-grid">
+  <!-- GAUGES -->
+  <div class="section-label">System Health Gauges</div>
+  <div class="gauge-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">LL Voltage Balance</span>
+        <span class="chart-meta" id="llImb-badge">—</span>
+      </div>
+      <div class="chart-body"><div id="gaugeLL" style="height:200px"></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">LN Voltage Balance</span>
+        <span class="chart-meta" id="lnImb-badge">—</span>
+      </div>
+      <div class="chart-body"><div id="gaugeLN" style="height:200px"></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">LL vs LN Ratio</span>
+        <span class="chart-meta">Expected: √3 ≈ 1.732</span>
+      </div>
+      <div class="chart-body"><div id="gaugeRatio" style="height:200px"></div></div>
+    </div>
+  </div>
 
-<div class="kpi-card c1">
+  <!-- TREND CHARTS ROW 1 -->
+  <div class="section-label">Voltage Trends</div>
+  <div class="one-col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Line-to-Line Voltage Trend</span>
+        <span class="chart-meta">RY · YB · BR · Avg LL</span>
+      </div>
+      <div class="chart-body"><div id="chartLL" style="height:260px"></div></div>
+    </div>
+  </div>
+  <div class="one-col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Line-to-Neutral Voltage Trend</span>
+        <span class="chart-meta">RN · YN · BN · Avg LN</span>
+      </div>
+      <div class="chart-body"><div id="chartLN" style="height:260px"></div></div>
+    </div>
+  </div>
 
-<div class="kpi-title">
-Average PF
-</div>
+  <!-- ANOMALY + DIST ROW -->
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Voltage Distribution (Box)</span>
+        <span class="chart-meta">All 6 phases</span>
+      </div>
+      <div class="chart-body"><div id="chartBox" style="height:260px"></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Sag / Swell Events by Hour</span>
+        <span class="chart-meta" id="sagSwellMeta">LN reference: 230 V</span>
+      </div>
+      <div class="chart-body"><div id="chartSagSwell" style="height:260px"></div></div>
+    </div>
+  </div>
 
-<div class="kpi-value" id="avgPF">
---
-</div>
+  <!-- IMBALANCE TRENDS + HEATMAP -->
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Imbalance % Trend</span>
+        <span class="chart-meta">LL & LN imbalance over time</span>
+      </div>
+      <div class="chart-body"><div id="chartImb" style="height:260px"></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Voltage Deviation from Nominal</span>
+        <span class="chart-meta">LN phases vs 230V</span>
+      </div>
+      <div class="chart-body"><div id="chartDev" style="height:260px"></div></div>
+    </div>
+  </div>
 
-<div class="kpi-footer">
-<span class="live-badge">LIVE</span>
-<span>Average from telemetry</span>
-</div>
+  <!-- ANOMALY LOG -->
+  <div class="section-label">Anomaly Event Log</div>
+  <div class="chart-card one-col">
+    <div class="chart-header">
+      <span class="chart-title">Detected Events</span>
+      <span class="chart-meta" id="anomalyCount">—</span>
+    </div>
+    <div class="anomaly-log" id="anomalyLog">
+      <div class="empty-state"><div class="empty-icon">⚡</div>Generate a report to view anomaly events</div>
+    </div>
+  </div>
 
-</div>
+  <!-- RAW TABLE -->
+  <div class="chart-card one-col tbl-show" id="rawTableCard" style="margin-top:14px;">
+    <div class="chart-header">
+      <span class="chart-title">Raw Data Table</span>
+      <span class="chart-meta" id="tblCount">—</span>
+    </div>
+    <div class="tbl-wrap">
+      <table id="rawTable">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>V_RY</th><th>V_YB</th><th>V_BR</th><th>Avg LL</th>
+            <th>V_RN</th><th>V_YN</th><th>V_BN</th><th>Avg LN</th>
+            <th>Imb LL%</th><th>Imb LN%</th>
+          </tr>
+        </thead>
+        <tbody id="rawTbody"></tbody>
+      </table>
+    </div>
+  </div>
 
-<div class="kpi-card c2">
-
-<div class="kpi-title">
-Minimum PF
-</div>
-
-<div class="kpi-value" id="minPF">
---
-</div>
-
-<div class="kpi-footer">
-<span class="live-badge">LIVE</span>
-<span>Lowest PF detected</span>
-</div>
-
-</div>
-
-<div class="kpi-card c3">
-
-<div class="kpi-title">
-Low PF Duration
-</div>
-
-<div class="kpi-value">
-<span id="lowPFDuration">--</span>
-<span class="kpi-unit">Min</span>
-</div>
-
-<div class="kpi-footer">
-<span class="live-badge">LIVE</span>
-<span>PF below 0.90</span>
-</div>
-
-</div>
-
-<div class="kpi-card c4">
-
-<div class="kpi-title">
-Estimated Penalty
-</div>
-
-<div class="kpi-value">
-₹ <span id="penalty">--</span>
-</div>
-
-<div class="kpi-footer">
-<span class="live-badge">LIVE</span>
-<span>Estimated</span>
-</div>
-
-</div>
-
-</div>
-
-<!-- ================= TREND ================= -->
-
-<div class="chart-card">
-
-<div class="chart-header">
-PF Trend With Active Power
-</div>
-
-<div class="chart-body">
-<div id="pfTrend"></div>
-</div>
-
-</div>
-
-<!-- ================= SCATTER ================= -->
-
-<div class="chart-card">
-
-<div class="chart-header">
-PF vs Active Power
-</div>
-
-<div class="chart-body">
-<div id="pfScatter"></div>
-</div>
-
-</div>
-
-<!-- ================= TABLE ================= -->
-
-<div class="table-card">
-
-<div class="chart-header">
-PF Event Table
-</div>
-
-<table>
-
-<thead>
-
-<tr>
-<th>Timestamp</th>
-<th>PF</th>
-<th>Active Power</th>
-<th>Status</th>
-</tr>
-
-</thead>
-
-<tbody id="eventTable"></tbody>
-
-</table>
-
-</div>
+</div><!-- /main -->
 
 <script>
+const DEVICE_ID = "1250b550-5bdb-11f0-9b14-15d3b3a473c1";
+const API_BASE   = "https://plantwiz.pimateck.in/api";
+const TELEMETRY  = "chiller_plant_1";
+const NOMINAL_LN = 230;
+const NOMINAL_LL = 415;
 
-/* ================= CONFIG ================= */
+const qs  = new URLSearchParams(location.search);
+const JWT = qs.get("token") || "";
 
-const DEVICE_ID =
-"1250b550-5bdb-11f0-9b14-15d3b3a473c1";
+let lastData  = [];
+let tableOpen = false;
 
-const TELEMETRY_KEY =
-"chiller_plant_1";
-
-/* ================= DEFAULT DATE ================= */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-const d = new Date();
-
-document.getElementById("reportDate").value =
-d.toISOString().slice(0,10);
-
+// ── Default date ──────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  const d = document.getElementById("reportDate");
+  if (!d.value) {
+    const today = new Date().toISOString().slice(0,10);
+    d.value = today;
+  }
 });
 
-/* ================= TOKEN ================= */
+// ── Fetch ─────────────────────────────────────────────────────────────────
+async function fetchTelemetry(from, to) {
+  const start = new Date(from).getTime();
+  const end   = new Date(to).getTime();
+  const url   = `${API_BASE}/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries` +
+                `?keys=${encodeURIComponent(TELEMETRY)}&startTs=${start}&endTs=${end}&limit=50000&agg=NONE`;
+  const hdrs  = JWT ? { "X-Authorization": `Bearer ${JWT}` } : {};
+  const res   = await fetch(url, { headers: hdrs });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const json  = await res.json();
 
-async function getToken(){
+  // The API returns { chiller_plant_1: [{ts, value: '{...json...}'}] }
+  const rows  = json[TELEMETRY] || [];
+  const parsed = [];
 
-try{
+  rows.forEach(r => {
+    try {
+      const obj = typeof r.value === "string" ? JSON.parse(r.value) : r.value;
+      // extract the 8 keys with prefix 18_
+      const p = {
+        ts:   +r.ts,
+        V_RY: num(obj["18_Voltage_RY"]),
+        V_YB: num(obj["18_Voltage_YB"]),
+        V_BR: num(obj["18_Voltage_BR"]),
+        AvLL: num(obj["18_Avg_Voltage_LL"]),
+        V_RN: num(obj["18_Voltage_RN"]),
+        V_YN: num(obj["18_Voltage_YN"]),
+        V_BN: num(obj["18_Voltage_BN"]),
+        AvLN: num(obj["18_Avg_Voltage_LN"]),
+      };
+      if (!isNaN(p.V_RY)) parsed.push(p);
+    } catch(e) {}
+  });
+  return parsed.sort((a,b) => a.ts - b.ts);
+}
+function num(v) { return parseFloat(v); }
 
-let token =
-localStorage.getItem("jwt_token");
-
-if(!token){
-token = sessionStorage.getItem("jwt_token");
+// ── Imbalance helper ──────────────────────────────────────────────────────
+function imbalance(a,b,c) {
+  const avg = (a+b+c)/3;
+  if (!avg) return 0;
+  return ((Math.max(a,b,c) - Math.min(a,b,c)) / avg) * 100;
 }
 
-if(token){
+// ── Analyse ───────────────────────────────────────────────────────────────
+function analyse(data) {
+  const sag=[], swell=[], anomalies=[];
+  const imbLL=[], imbLN=[];
 
-try{
-token = JSON.parse(token);
-}catch(e){}
+  data.forEach(d => {
+    const iLL = imbalance(d.V_RY, d.V_YB, d.V_BR);
+    const iLN = imbalance(d.V_RN, d.V_YN, d.V_BN);
+    imbLL.push({ts:d.ts, v:iLL});
+    imbLN.push({ts:d.ts, v:iLN});
 
+    // Sag/Swell on LN phases
+    [["RN",d.V_RN],["YN",d.V_YN],["BN",d.V_BN]].forEach(([ph,v]) => {
+      const pu = v/NOMINAL_LN;
+      if (pu < 0.9) { sag.push({ts:d.ts,ph,v,pu}); anomalies.push({ts:d.ts,type:"SAG",ph,v,pu}); }
+      if (pu > 1.1) { swell.push({ts:d.ts,ph,v,pu}); anomalies.push({ts:d.ts,type:"SWELL",ph,v,pu}); }
+    });
+    if (iLL > 2) anomalies.push({ts:d.ts,type:"IMB",ph:"LL",v:iLL.toFixed(2)+"%"});
+    if (iLN > 2) anomalies.push({ts:d.ts,type:"IMB",ph:"LN",v:iLN.toFixed(2)+"%"});
+  });
+  return {sag, swell, imbLL, imbLN, anomalies};
 }
 
-return token || "";
+// ── Plotly shared config ───────────────────────────────────────────────────
+const PLY = {
+  font: { family:"'JetBrains Mono','Barlow',sans-serif", color:"#6b7a99", size:11 },
+  paper_bgcolor:"transparent", plot_bgcolor:"transparent",
+  margin:{t:10,b:40,l:54,r:10},
+  legend:{orientation:"h",y:-0.25,font:{size:10},bgcolor:"transparent"},
+  xaxis:{ gridcolor:"rgba(0,0,0,0.05)", linecolor:"rgba(0,0,0,0.1)",
+           tickfont:{size:10}, zeroline:false },
+  yaxis:{ gridcolor:"rgba(0,0,0,0.05)", linecolor:"rgba(0,0,0,0.1)",
+           tickfont:{size:10}, zeroline:false },
+};
+const PLY_CFG = { displayModeBar:false, responsive:true };
 
-}catch(e){
-
-return "";
-
+function mkLayout(extra={}) {
+  return Object.assign({}, PLY, extra, {
+    xaxis: Object.assign({},PLY.xaxis,extra.xaxis||{}),
+    yaxis: Object.assign({},PLY.yaxis,extra.yaxis||{}),
+  });
 }
 
+// ── Sparkline helper for KPI ─────────────────────────────────────────────
+function badgeFor(val, nom, tol=0.05) {
+  const d = Math.abs(val-nom)/nom;
+  if (d<=tol)    return `<span class="kpi-badge badge-ok">✓ NOMINAL</span>`;
+  if (d<=tol*2)  return `<span class="kpi-badge badge-warn">⚠ MARGINAL</span>`;
+  return `<span class="kpi-badge badge-crit">✕ DEVIATION</span>`;
 }
 
-/* ================= FETCH ================= */
+// ── GENERATE ──────────────────────────────────────────────────────────────
+async function generateReport() {
+  const dateVal = document.getElementById("reportDate").value;
+  if (!dateVal) { alert("Please select a date"); return; }
 
-async function fetchTelemetry(startTs,endTs){
+  showLoading(true);
+  try {
+    const from = dateVal + "T00:00:00";
+    const to   = dateVal + "T23:59:59";
+    const data = await fetchTelemetry(from, to);
+    lastData = data;
 
-const token = await getToken();
+    if (!data.length) {
+      alert("No data found for selected date.");
+      showLoading(false);
+      return;
+    }
 
-const url =
-"/api/plugins/telemetry/DEVICE/"
-+
-DEVICE_ID
-+
-"/values/timeseries"
-+
-"?keys="
-+
-TELEMETRY_KEY
-+
-"&startTs="
-+
-startTs
-+
-"&endTs="
-+
-endTs
-+
-"&limit=50000&agg=NONE";
+    const {sag, swell, imbLL, imbLN, anomalies} = analyse(data);
+    const N = data.length;
+    const ts = data.map(d=>new Date(d.ts));
 
-const response = await fetch(url,{
+    // ── Status bar update ──────────────────────────────────────────────────
+    document.getElementById("statusTs").textContent =
+      `${new Date(data[0].ts).toLocaleTimeString()} — ${new Date(data[N-1].ts).toLocaleTimeString()}`;
+    document.getElementById("statusSamples").textContent = `${N.toLocaleString()} samples`;
 
-method:"GET",
+    // ── KPI latest ────────────────────────────────────────────────────────
+    const last = data[N-1];
+    const first = data[0];
+    // compute daily stats
+    function stat(key) {
+      const vals = data.map(d=>d[key]);
+      const mn = Math.min(...vals), mx = Math.max(...vals);
+      const av = vals.reduce((s,v)=>s+v,0)/vals.length;
+      return {mn,mx,av};
+    }
+    const stats = {};
+    ["V_RY","V_YB","V_BR","AvLL","V_RN","V_YN","V_BN","AvLN"].forEach(k=>stats[k]=stat(k));
 
-headers:{
-"Content-Type":"application/json",
-"X-Authorization":"Bearer " + token
+    function setKPI(id, val, nom, key) {
+      const s = stats[key];
+      document.getElementById(`kv-${id}`).innerHTML = `${val.toFixed(1)}<span class="kpi-unit">V</span>`;
+      document.getElementById(`ks-${id}`).innerHTML =
+        badgeFor(val,nom) +
+        `&nbsp; <span style="color:var(--muted);font-size:10px">min ${s.mn.toFixed(0)} / max ${s.mx.toFixed(0)} / avg ${s.av.toFixed(1)}</span>`;
+    }
+    setKPI("ry", last.V_RY, NOMINAL_LL, "V_RY");
+    setKPI("yb", last.V_YB, NOMINAL_LL, "V_YB");
+    setKPI("br", last.V_BR, NOMINAL_LL, "V_BR");
+    setKPI("avll",last.AvLL,NOMINAL_LL,"AvLL");
+    setKPI("rn", last.V_RN, NOMINAL_LN, "V_RN");
+    setKPI("yn", last.V_YN, NOMINAL_LN, "V_YN");
+    setKPI("bn", last.V_BN, NOMINAL_LN, "V_BN");
+    setKPI("avln",last.AvLN,NOMINAL_LN,"AvLN");
+
+    // ── Gauges ─────────────────────────────────────────────────────────────
+    const maxImbLL = Math.max(...imbLL.map(x=>x.v));
+    const maxImbLN = Math.max(...imbLN.map(x=>x.v));
+    const ratio    = last.AvLL / last.AvLN;
+
+    function gaugePlot(elId, value, max, title, colorRanges) {
+      const barColor = value < colorRanges[0] ? "#00a854" : value < colorRanges[1] ? "#d97706" : "#dc2626";
+      Plotly.newPlot(elId, [{
+        type:"indicator", mode:"gauge+number",
+        value: +value.toFixed(3),
+        gauge:{
+          axis:{range:[0,max], tickfont:{size:9,color:"#6b7a99"}, tickcolor:"#6b7a99"},
+          bar:{color: barColor, thickness:0.28},
+          bgcolor:"rgba(0,0,0,0.03)",
+          borderwidth:1,
+          bordercolor:"rgba(0,0,0,0.08)",
+          steps:[
+            {range:[0,colorRanges[0]],             color:"rgba(0,168,84,0.15)"},
+            {range:[colorRanges[0],colorRanges[1]], color:"rgba(217,119,6,0.15)"},
+            {range:[colorRanges[1],max],             color:"rgba(220,38,38,0.15)"},
+          ],
+          threshold:{line:{color:barColor,width:3},value}
+        },
+        number:{font:{family:"'Rajdhani',sans-serif",size:30,color:"#1a2340"}, suffix:title},
+      }], mkLayout({margin:{t:20,b:10,l:30,r:30},height:200}), PLY_CFG);
+    }
+    gaugePlot("gaugeLL", maxImbLL, 5, "%", [1,2]);
+    gaugePlot("gaugeLN", maxImbLN, 5, "%", [1,2]);
+    gaugePlot("gaugeRatio", ratio, 2, "", [1.68,1.80]);
+
+    document.getElementById("llImb-badge").innerHTML = maxImbLL<1
+      ? `<span class="kpi-badge badge-ok">Balanced</span>`
+      : maxImbLL<2
+      ? `<span class="kpi-badge badge-warn">Marginal</span>`
+      : `<span class="kpi-badge badge-crit">Unbalanced</span>`;
+    document.getElementById("lnImb-badge").innerHTML = maxImbLN<1
+      ? `<span class="kpi-badge badge-ok">Balanced</span>`
+      : maxImbLN<2
+      ? `<span class="kpi-badge badge-warn">Marginal</span>`
+      : `<span class="kpi-badge badge-crit">Unbalanced</span>`;
+
+    // ── LL Trend ──────────────────────────────────────────────────────────
+    Plotly.newPlot("chartLL", [
+      {x:ts, y:data.map(d=>d.V_RY),  name:"V RY",  mode:"lines", line:{color:"#0070e0",width:1.5}},
+      {x:ts, y:data.map(d=>d.V_YB),  name:"V YB",  mode:"lines", line:{color:"#d97706",width:1.5}},
+      {x:ts, y:data.map(d=>d.V_BR),  name:"V BR",  mode:"lines", line:{color:"#7c3aed",width:1.5}},
+      {x:ts, y:data.map(d=>d.AvLL),  name:"Avg LL",mode:"lines", line:{color:"#374151",width:1.5,dash:"dot"}},
+    ], mkLayout({yaxis:{title:{text:"Voltage (V)",font:{size:10}}}}), PLY_CFG);
+
+    // ── LN Trend ──────────────────────────────────────────────────────────
+    const lnShapes = [
+      {type:"line",x0:ts[0],x1:ts[N-1],y0:NOMINAL_LN*0.9,y1:NOMINAL_LN*0.9,
+       line:{color:"rgba(220,38,38,0.4)",dash:"dot",width:1}},
+      {type:"line",x0:ts[0],x1:ts[N-1],y0:NOMINAL_LN*1.1,y1:NOMINAL_LN*1.1,
+       line:{color:"rgba(220,38,38,0.4)",dash:"dot",width:1}},
+    ];
+    Plotly.newPlot("chartLN", [
+      {x:ts, y:data.map(d=>d.V_RN),  name:"V RN",  mode:"lines", line:{color:"#0070e0",width:1.5}},
+      {x:ts, y:data.map(d=>d.V_YN),  name:"V YN",  mode:"lines", line:{color:"#d97706",width:1.5}},
+      {x:ts, y:data.map(d=>d.V_BN),  name:"V BN",  mode:"lines", line:{color:"#7c3aed",width:1.5}},
+      {x:ts, y:data.map(d=>d.AvLN),  name:"Avg LN",mode:"lines", line:{color:"#374151",width:1.5,dash:"dot"}},
+    ], mkLayout({shapes:lnShapes,yaxis:{title:{text:"Voltage (V)",font:{size:10}}}}), PLY_CFG);
+
+    // ── Box plot ──────────────────────────────────────────────────────────
+    Plotly.newPlot("chartBox", [
+      {y:data.map(d=>d.V_RY), name:"RY", type:"box", marker:{color:"#0070e0"}, boxmean:true},
+      {y:data.map(d=>d.V_YB), name:"YB", type:"box", marker:{color:"#d97706"}, boxmean:true},
+      {y:data.map(d=>d.V_BR), name:"BR", type:"box", marker:{color:"#7c3aed"}, boxmean:true},
+      {y:data.map(d=>d.V_RN), name:"RN", type:"box", marker:{color:"#e05a00"}, boxmean:true},
+      {y:data.map(d=>d.V_YN), name:"YN", type:"box", marker:{color:"#00a854"}, boxmean:true},
+      {y:data.map(d=>d.V_BN), name:"BN", type:"box", marker:{color:"#be185d"}, boxmean:true},
+    ], mkLayout({boxmode:"group"}), PLY_CFG);
+
+    // ── Sag/Swell by hour ────────────────────────────────────────────────
+    const hrs = {};
+    sag.forEach(e=>{const h=new Date(e.ts).getHours();hrs[h]=hrs[h]||{s:0,sw:0};hrs[h].s++;});
+    swell.forEach(e=>{const h=new Date(e.ts).getHours();hrs[h]=hrs[h]||{s:0,sw:0};hrs[h].sw++;});
+    const hKeys = Object.keys(hrs).sort((a,b)=>+a-+b);
+    Plotly.newPlot("chartSagSwell",[
+      {x:hKeys.map(h=>h+"h"), y:hKeys.map(h=>hrs[h].s),  name:"Sag",  type:"bar", marker:{color:"#d97706"}},
+      {x:hKeys.map(h=>h+"h"), y:hKeys.map(h=>hrs[h].sw), name:"Swell", type:"bar", marker:{color:"#e05a00"}},
+    ], mkLayout({barmode:"group"}), PLY_CFG);
+    document.getElementById("sagSwellMeta").textContent =
+      `${sag.length} sags · ${swell.length} swells`;
+
+    // ── Imbalance trend ──────────────────────────────────────────────────
+    const imbShape = {type:"line",x0:ts[0],x1:ts[N-1],y0:2,y1:2,
+      line:{color:"rgba(220,38,38,0.5)",dash:"dot",width:1}};
+    Plotly.newPlot("chartImb",[
+      {x:ts, y:imbLL.map(x=>+x.v.toFixed(3)), name:"LL Imbalance %", mode:"lines",
+       line:{color:"#0070e0",width:1.5}},
+      {x:ts, y:imbLN.map(x=>+x.v.toFixed(3)), name:"LN Imbalance %", mode:"lines",
+       line:{color:"#d97706",width:1.5}},
+    ], mkLayout({shapes:[imbShape],yaxis:{title:{text:"%",font:{size:10}}}}), PLY_CFG);
+
+    // ── Deviation from nominal ───────────────────────────────────────────
+    Plotly.newPlot("chartDev",[
+      {x:ts, y:data.map(d=>+(d.V_RN-NOMINAL_LN).toFixed(2)), name:"RN dev", mode:"lines", line:{color:"#0070e0",width:1}},
+      {x:ts, y:data.map(d=>+(d.V_YN-NOMINAL_LN).toFixed(2)), name:"YN dev", mode:"lines", line:{color:"#d97706",width:1}},
+      {x:ts, y:data.map(d=>+(d.V_BN-NOMINAL_LN).toFixed(2)), name:"BN dev", mode:"lines", line:{color:"#7c3aed",width:1}},
+    ], mkLayout({
+      shapes:[
+        {type:"rect",xref:"paper",x0:0,x1:1,y0:-NOMINAL_LN*0.1,y1:NOMINAL_LN*0.1,
+         fillcolor:"rgba(0,168,84,0.06)",line:{width:0}},
+      ],
+      yaxis:{title:{text:"ΔV from 230V",font:{size:10}}, zeroline:true,
+             zerolinecolor:"rgba(0,0,0,0.2)",zerolinewidth:1}
+    }), PLY_CFG);
+
+    // ── Anomaly log ──────────────────────────────────────────────────────
+    const log = document.getElementById("anomalyLog");
+    document.getElementById("anomalyCount").textContent =
+      `${anomalies.length} events detected`;
+    if (anomalies.length === 0) {
+      log.innerHTML = `<div class="empty-state"><div class="empty-icon">✓</div>No anomalies detected — system nominal</div>`;
+    } else {
+      // show last 100 sorted by ts desc
+      const evts = [...anomalies].sort((a,b)=>b.ts-a.ts).slice(0,100);
+      log.innerHTML = evts.map(e => {
+        const cls = e.type==="SAG"?"anom-sag":e.type==="SWELL"?"anom-swell":"anom-imb";
+        const detail = e.type==="IMB"
+          ? `${e.ph} imbalance: ${e.v}`
+          : `Phase ${e.ph}: ${e.v.toFixed(2)} V (${(e.pu*100).toFixed(1)}% of nominal)`;
+        return `<div class="anomaly-item">
+          <span class="anom-time">${new Date(e.ts).toLocaleTimeString()}</span>
+          <span class="anom-type ${cls}">${e.type}</span>
+          <span class="anom-detail">${detail}</span>
+        </div>`;
+      }).join("");
+    }
+
+    // ── Raw table ─────────────────────────────────────────────────────────
+    if (tableOpen) renderTable(data, imbLL, imbLN);
+
+  } catch(err) {
+    alert("Error fetching data: " + err.message);
+  }
+  showLoading(false);
 }
 
-});
-
-if(!response.ok){
-
-throw new Error(
-"Telemetry API Error : " + response.status
-);
-
+// ── Table ────────────────────────────────────────────────────────────────
+function toggleTable() {
+  tableOpen = !tableOpen;
+  document.getElementById("rawTableCard").style.display = tableOpen ? "block" : "none";
+  document.getElementById("tblBtn").classList.toggle("active", tableOpen);
+  if (tableOpen && lastData.length) {
+    const {imbLL, imbLN} = analyse(lastData);
+    renderTable(lastData, imbLL, imbLN);
+  }
+}
+function renderTable(data, imbLL, imbLN) {
+  const tbody = document.getElementById("rawTbody");
+  document.getElementById("tblCount").textContent = `${data.length.toLocaleString()} rows`;
+  tbody.innerHTML = data.map((d,i) => `<tr>
+    <td>${new Date(d.ts).toLocaleString()}</td>
+    <td>${d.V_RY.toFixed(2)}</td><td>${d.V_YB.toFixed(2)}</td><td>${d.V_BR.toFixed(2)}</td>
+    <td>${d.AvLL.toFixed(2)}</td>
+    <td>${d.V_RN.toFixed(2)}</td><td>${d.V_YN.toFixed(2)}</td><td>${d.V_BN.toFixed(2)}</td>
+    <td>${d.AvLN.toFixed(2)}</td>
+    <td style="color:${imbLL[i]?.v>2?'var(--red)':imbLL[i]?.v>1?'var(--yellow)':'var(--green)'}">
+      ${imbLL[i]?.v.toFixed(2)||"—"}
+    </td>
+    <td style="color:${imbLN[i]?.v>2?'var(--red)':imbLN[i]?.v>1?'var(--yellow)':'var(--green)'}">
+      ${imbLN[i]?.v.toFixed(2)||"—"}
+    </td>
+  </tr>`).join("");
 }
 
-const json = await response.json();
-
-const rows =
-json[TELEMETRY_KEY] || [];
-
-const parsed = [];
-
-rows.forEach(r=>{
-
-try{
-
-const obj =
-typeof r.value === "string"
-?
-JSON.parse(r.value)
-:
-r.value;
-
-parsed.push({
-
-ts:+r.ts,
-
-PF:
-parseFloat(
-obj["18_Avg_PF"] || 0
-),
-
-ActPower:
-parseFloat(
-obj["18_Act_Power_Total"] || 0
-),
-
-Energy:
-parseFloat(
-obj["18_Act_Energy_Total"] || 0
-)
-
-});
-
-}catch(e){}
-
-});
-
-return parsed.sort((a,b)=>a.ts-b.ts);
-
+function showLoading(v) {
+  document.getElementById("loadingOverlay").classList.toggle("show", v);
 }
-
-/* ================= MAIN ================= */
-
-async function generateReport(){
-
-try{
-
-document.getElementById("statusText").innerHTML =
-"Loading telemetry...";
-
-const selectedDate =
-document.getElementById("reportDate").value;
-
-const startTs =
-new Date(selectedDate + "T00:00:00").getTime();
-
-const endTs =
-new Date(selectedDate + "T23:59:59").getTime();
-
-const data =
-await fetchTelemetry(startTs,endTs);
-
-if(!data.length){
-
-alert("No telemetry found");
-
-return;
-
-}
-
-/* ================= KPI ================= */
-
-const pfValues =
-data
-.map(x=>x.PF)
-.filter(x=>!isNaN(x));
-
-const avgPF =
-pfValues.reduce((a,b)=>a+b,0)
-/
-pfValues.length;
-
-const minPF =
-Math.min(...pfValues);
-
-const lowPFCount =
-pfValues.filter(x=>x < 0.90).length;
-
-const lowPFDuration =
-lowPFCount;
-
-const estimatedPenalty =
-(lowPFDuration * 12).toFixed(0);
-
-document.getElementById("avgPF").innerHTML =
-avgPF.toFixed(3);
-
-document.getElementById("minPF").innerHTML =
-minPF.toFixed(3);
-
-document.getElementById("lowPFDuration").innerHTML =
-lowPFDuration;
-
-document.getElementById("penalty").innerHTML =
-estimatedPenalty;
-
-/* ================= STATUS ================= */
-
-document.getElementById("statusText").innerHTML =
-data.length + " Samples Loaded";
-
-/* ================= TREND ================= */
-
-Plotly.newPlot("pfTrend",[
-
-{
-x:data.map(x=>new Date(x.ts)),
-y:data.map(x=>x.PF),
-
-name:"Power Factor",
-
-mode:"lines",
-
-line:{
-color:"#2563eb",
-width:2
-}
-},
-
-{
-x:data.map(x=>new Date(x.ts)),
-y:data.map(x=>x.ActPower),
-
-name:"Active Power",
-
-mode:"lines",
-
-yaxis:"y2",
-
-line:{
-color:"#ef4444",
-width:2
-}
-}
-
-],
-
-{
-
-paper_bgcolor:"transparent",
-plot_bgcolor:"transparent",
-
-margin:{
-t:20,
-l:50,
-r:50,
-b:40
-},
-
-xaxis:{
-title:"Time"
-},
-
-yaxis:{
-title:"PF",
-range:[0,1.2]
-},
-
-yaxis2:{
-title:"kW",
-overlaying:"y",
-side:"right"
-},
-
-legend:{
-orientation:"h"
-}
-
-},
-
-{
-responsive:true,
-displayModeBar:false
-}
-
-/* ================= SCATTER ================= */
-
-);
-
-Plotly.newPlot("pfScatter",[
-
-{
-x:data.map(x=>x.ActPower),
-y:data.map(x=>x.PF),
-
-mode:"markers",
-
-marker:{
-size:7,
-color:data.map(x=>x.PF),
-colorscale:"RdYlGn",
-showscale:true
-},
-
-name:"PF"
-
-}
-
-],
-
-{
-
-paper_bgcolor:"transparent",
-plot_bgcolor:"transparent",
-
-margin:{
-t:20,
-l:50,
-r:20,
-b:50
-},
-
-xaxis:{
-title:"Active Power (kW)"
-},
-
-yaxis:{
-title:"Power Factor",
-range:[0,1.2]
-}
-
-},
-
-{
-responsive:true,
-displayModeBar:false
-}
-
-/* ================= TABLE ================= */
-
-);
-
-const tbody =
-document.getElementById("eventTable");
-
-tbody.innerHTML = "";
-
-data.forEach(row=>{
-
-let status = "NORMAL";
-
-if(row.PF < 0.90){
-status = "LOW PF";
-}
-
-const tr =
-document.createElement("tr");
-
-tr.innerHTML = `
-
-<td>
-${new Date(row.ts).toLocaleString()}
-</td>
-
-<td>
-${row.PF.toFixed(3)}
-</td>
-
-<td>
-${row.ActPower.toFixed(2)} kW
-</td>
-
-<td>
-${status}
-</td>
-
-`;
-
-tbody.appendChild(tr);
-
-});
-
-}catch(err){
-
-console.error(err);
-
-document.getElementById("statusText").innerHTML =
-"Error loading data";
-
-alert(err.message);
-
-}
-
-}
-
 </script>
-
 </body>
 </html>
