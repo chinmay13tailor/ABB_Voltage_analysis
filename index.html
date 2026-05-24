@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>PF Analysis</title>
 
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -21,24 +21,22 @@ box-sizing:border-box;
 body{
 font-family:'Poppins',sans-serif;
 background:#f4f6fa;
-color:#1f2937;
+color:#111827;
 overflow-x:hidden;
 }
 
-/* ========================= TOPBAR ========================= */
+/* ================= TOP BAR ================= */
 
 .topbar{
 width:100%;
 background:#fff;
-padding:12px 18px;
+padding:14px 18px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-border-bottom:1px solid #e5e7eb;
-box-shadow:0 1px 3px rgba(0,0,0,0.05);
-position:sticky;
-top:0;
-z-index:100;
+border:1px solid #e5e7eb;
+border-radius:12px;
+margin-bottom:14px;
 }
 
 .left-controls{
@@ -51,67 +49,58 @@ gap:12px;
 width:10px;
 height:10px;
 border-radius:50%;
-background:#16a34a;
-box-shadow:0 0 0 3px rgba(22,163,74,0.2);
+background:#22c55e;
+box-shadow:0 0 0 4px rgba(34,197,94,0.2);
 }
 
 .date-input{
-padding:8px 12px;
+padding:10px 14px;
 border:1px solid #d1d5db;
-border-radius:6px;
+border-radius:8px;
 font-family:'Poppins';
 font-size:13px;
 outline:none;
+background:#fff;
 }
 
 .btn{
-padding:8px 18px;
+padding:10px 20px;
 border:none;
-border-radius:6px;
+border-radius:8px;
 font-family:'Poppins';
 font-weight:600;
 cursor:pointer;
+background:#2563eb;
+color:#fff;
 transition:0.2s;
 }
 
-.btn-primary{
-background:#2563eb;
-color:#fff;
-}
-
-.btn-primary:hover{
+.btn:hover{
 background:#1d4ed8;
 }
 
-.right-status{
+.status{
 font-size:12px;
-color:#6b7280;
+color:#64748b;
 }
 
-/* ========================= MAIN ========================= */
-
-.main{
-padding:14px;
-width:100%;
-}
-
-/* ========================= KPI GRID ========================= */
+/* ================= KPI ================= */
 
 .kpi-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:12px;
+gap:14px;
 margin-bottom:14px;
 }
 
 .kpi-card{
 background:#fff;
+border-radius:12px;
 border:1px solid #e5e7eb;
-border-radius:10px;
-padding:16px;
+padding:18px;
 position:relative;
 overflow:hidden;
-min-height:120px;
+min-height:135px;
 }
 
 .kpi-card::before{
@@ -123,18 +112,18 @@ bottom:0;
 width:4px;
 }
 
-.c1::before{background:#10b981;}
+.c1::before{background:#22c55e;}
 .c2::before{background:#f59e0b;}
-.c3::before{background:#14b8a6;}
+.c3::before{background:#2563eb;}
 .c4::before{background:#ef4444;}
 
 .kpi-title{
 font-size:11px;
-font-weight:600;
 letter-spacing:2px;
 text-transform:uppercase;
+font-weight:600;
 color:#94a3b8;
-margin-bottom:10px;
+margin-bottom:12px;
 }
 
 .kpi-value{
@@ -145,9 +134,9 @@ margin-bottom:10px;
 }
 
 .kpi-unit{
-font-size:20px;
+font-size:18px;
 font-weight:500;
-color:#64748b;
+color:#94a3b8;
 }
 
 .kpi-footer{
@@ -156,24 +145,24 @@ align-items:center;
 gap:8px;
 font-size:11px;
 color:#94a3b8;
-margin-top:8px;
+margin-top:10px;
 }
 
 .live-badge{
 background:#dcfce7;
 color:#15803d;
 padding:4px 8px;
-border-radius:5px;
+border-radius:6px;
 font-size:10px;
 font-weight:700;
 }
 
-/* ========================= CHARTS ========================= */
+/* ================= CHART ================= */
 
 .chart-card{
 background:#fff;
+border-radius:12px;
 border:1px solid #e5e7eb;
-border-radius:10px;
 margin-bottom:14px;
 overflow:hidden;
 }
@@ -181,34 +170,28 @@ overflow:hidden;
 .chart-header{
 padding:14px 18px;
 border-bottom:1px solid #e5e7eb;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.chart-title{
-font-size:18px;
+font-size:20px;
 font-weight:700;
 }
 
 .chart-body{
-padding:8px;
+padding:10px;
 }
 
 #pfTrend{
-height:400px;
+height:420px;
 }
 
 #pfScatter{
-height:400px;
+height:420px;
 }
 
-/* ========================= TABLE ========================= */
+/* ================= TABLE ================= */
 
 .table-card{
 background:#fff;
+border-radius:12px;
 border:1px solid #e5e7eb;
-border-radius:10px;
 overflow:hidden;
 }
 
@@ -224,11 +207,11 @@ background:#f8fafc;
 th{
 padding:12px;
 font-size:11px;
-text-transform:uppercase;
 letter-spacing:1px;
+text-transform:uppercase;
 text-align:left;
-color:#64748b;
 border-bottom:1px solid #e5e7eb;
+color:#64748b;
 }
 
 td{
@@ -241,7 +224,7 @@ tr:hover td{
 background:#f8fafc;
 }
 
-/* ========================= RESPONSIVE ========================= */
+/* ================= RESPONSIVE ================= */
 
 @media(max-width:1200px){
 
@@ -259,8 +242,8 @@ grid-template-columns:1fr;
 
 .topbar{
 flex-direction:column;
-gap:10px;
 align-items:flex-start;
+gap:10px;
 }
 
 }
@@ -270,7 +253,7 @@ align-items:flex-start;
 
 <body>
 
-<!-- ========================= TOPBAR ========================= -->
+<!-- ================= TOP BAR ================= -->
 
 <div class="topbar">
 
@@ -278,52 +261,68 @@ align-items:flex-start;
 
 <div class="live-dot"></div>
 
-<label style="font-size:13px;color:#64748b;">Date</label>
+<label style="font-size:13px;color:#64748b;">
+Date
+</label>
 
 <input type="date" id="reportDate" class="date-input">
 
-<button class="btn btn-primary" onclick="generateReport()">
+<button class="btn" onclick="generateReport()">
 ▶ Analyze
 </button>
 
 </div>
 
-<div class="right-status" id="statusText">
+<div class="status" id="statusText">
 Waiting for analysis...
 </div>
 
 </div>
 
-<!-- ========================= MAIN ========================= -->
-
-<div class="main">
-
-<!-- KPI -->
+<!-- ================= KPI ================= -->
 
 <div class="kpi-grid">
 
 <div class="kpi-card c1">
-<div class="kpi-title">Average PF</div>
-<div class="kpi-value" id="avgPF">--</div>
+
+<div class="kpi-title">
+Average PF
+</div>
+
+<div class="kpi-value" id="avgPF">
+--
+</div>
 
 <div class="kpi-footer">
 <span class="live-badge">LIVE</span>
 <span>Average from telemetry</span>
 </div>
+
 </div>
 
 <div class="kpi-card c2">
-<div class="kpi-title">Minimum PF</div>
-<div class="kpi-value" id="minPF">--</div>
+
+<div class="kpi-title">
+Minimum PF
+</div>
+
+<div class="kpi-value" id="minPF">
+--
+</div>
 
 <div class="kpi-footer">
 <span class="live-badge">LIVE</span>
 <span>Lowest PF detected</span>
 </div>
+
 </div>
 
 <div class="kpi-card c3">
-<div class="kpi-title">Low PF Duration</div>
+
+<div class="kpi-title">
+Low PF Duration
+</div>
+
 <div class="kpi-value">
 <span id="lowPFDuration">--</span>
 <span class="kpi-unit">Min</span>
@@ -333,28 +332,34 @@ Waiting for analysis...
 <span class="live-badge">LIVE</span>
 <span>PF below 0.90</span>
 </div>
+
 </div>
 
 <div class="kpi-card c4">
-<div class="kpi-title">Estimated Penalty</div>
+
+<div class="kpi-title">
+Estimated Penalty
+</div>
+
 <div class="kpi-value">
 ₹ <span id="penalty">--</span>
 </div>
 
 <div class="kpi-footer">
 <span class="live-badge">LIVE</span>
-<span>Based on PF duration</span>
+<span>Estimated</span>
 </div>
+
 </div>
 
 </div>
 
-<!-- TREND -->
+<!-- ================= TREND ================= -->
 
 <div class="chart-card">
 
 <div class="chart-header">
-<div class="chart-title">PF Trend With Active Power</div>
+PF Trend With Active Power
 </div>
 
 <div class="chart-body">
@@ -363,12 +368,12 @@ Waiting for analysis...
 
 </div>
 
-<!-- SCATTER -->
+<!-- ================= SCATTER ================= -->
 
 <div class="chart-card">
 
 <div class="chart-header">
-<div class="chart-title">PF vs Active Power</div>
+PF vs Active Power
 </div>
 
 <div class="chart-body">
@@ -377,23 +382,25 @@ Waiting for analysis...
 
 </div>
 
-<!-- TABLE -->
+<!-- ================= TABLE ================= -->
 
 <div class="table-card">
 
 <div class="chart-header">
-<div class="chart-title">PF Event Table</div>
+PF Event Table
 </div>
 
 <table>
 
 <thead>
+
 <tr>
 <th>Timestamp</th>
 <th>PF</th>
 <th>Active Power</th>
 <th>Status</th>
 </tr>
+
 </thead>
 
 <tbody id="eventTable"></tbody>
@@ -402,47 +409,17 @@ Waiting for analysis...
 
 </div>
 
-</div>
-
 <script>
 
-/* =========================================================
-   CONFIG
-========================================================= */
+/* ================= CONFIG ================= */
 
-const DEVICE_ID = "1250b550-5bdb-11f0-9b14-15d3b3a473c1";
+const DEVICE_ID =
+"1250b550-5bdb-11f0-9b14-15d3b3a473c1";
 
-const API_BASE = "https://plantwiz.pimateck.in/api";
+const TELEMETRY_KEY =
+"chiller_plant_1";
 
-const TELEMETRY_KEY = "chiller_plant_1";
-
-/* =========================================================
-   TOKEN FETCH
-========================================================= */
-
-async function getToken(){
-
-let token = localStorage.getItem('jwt_token');
-
-if(!token){
-token = sessionStorage.getItem('jwt_token');
-}
-
-if(token){
-
-try{
-token = JSON.parse(token);
-}catch(e){}
-
-}
-
-return token;
-
-}
-
-/* =========================================================
-   DEFAULT DATE
-========================================================= */
+/* ================= DEFAULT DATE ================= */
 
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -453,30 +430,63 @@ d.toISOString().slice(0,10);
 
 });
 
-/* =========================================================
-   FETCH DATA
-========================================================= */
+/* ================= TOKEN ================= */
 
-async function fetchTelemetry(from,to){
+async function getToken(){
 
-const startTs = new Date(from).getTime();
+try{
 
-const endTs = new Date(to).getTime();
+let token =
+localStorage.getItem("jwt_token");
+
+if(!token){
+token = sessionStorage.getItem("jwt_token");
+}
+
+if(token){
+
+try{
+token = JSON.parse(token);
+}catch(e){}
+
+}
+
+return token || "";
+
+}catch(e){
+
+return "";
+
+}
+
+}
+
+/* ================= FETCH ================= */
+
+async function fetchTelemetry(startTs,endTs){
 
 const token = await getToken();
 
 const url =
-`${API_BASE}/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries`
+"/api/plugins/telemetry/DEVICE/"
 +
-`?keys=${TELEMETRY_KEY}`
+DEVICE_ID
 +
-`&startTs=${startTs}`
+"/values/timeseries"
 +
-`&endTs=${endTs}`
+"?keys="
 +
-`&limit=50000`
+TELEMETRY_KEY
 +
-`&agg=NONE`;
+"&startTs="
++
+startTs
++
+"&endTs="
++
+endTs
++
+"&limit=50000&agg=NONE";
 
 const response = await fetch(url,{
 
@@ -490,12 +500,17 @@ headers:{
 });
 
 if(!response.ok){
-throw new Error("HTTP " + response.status);
+
+throw new Error(
+"Telemetry API Error : " + response.status
+);
+
 }
 
 const json = await response.json();
 
-const rows = json[TELEMETRY_KEY] || [];
+const rows =
+json[TELEMETRY_KEY] || [];
 
 const parsed = [];
 
@@ -514,11 +529,20 @@ parsed.push({
 
 ts:+r.ts,
 
-PF:parseFloat(obj["18_Avg_PF"] || 0),
+PF:
+parseFloat(
+obj["18_Avg_PF"] || 0
+),
 
-ActPower:parseFloat(obj["18_Act_Power_Total"] || 0),
+ActPower:
+parseFloat(
+obj["18_Act_Power_Total"] || 0
+),
 
-Energy:parseFloat(obj["18_Act_Energy_Total"] || 0)
+Energy:
+parseFloat(
+obj["18_Act_Energy_Total"] || 0
+)
 
 });
 
@@ -530,9 +554,7 @@ return parsed.sort((a,b)=>a.ts-b.ts);
 
 }
 
-/* =========================================================
-   GENERATE REPORT
-========================================================= */
+/* ================= MAIN ================= */
 
 async function generateReport(){
 
@@ -541,14 +563,17 @@ try{
 document.getElementById("statusText").innerHTML =
 "Loading telemetry...";
 
-const date =
+const selectedDate =
 document.getElementById("reportDate").value;
 
-const from = date + "T00:00:00";
+const startTs =
+new Date(selectedDate + "T00:00:00").getTime();
 
-const to = date + "T23:59:59";
+const endTs =
+new Date(selectedDate + "T23:59:59").getTime();
 
-const data = await fetchTelemetry(from,to);
+const data =
+await fetchTelemetry(startTs,endTs);
 
 if(!data.length){
 
@@ -558,12 +583,12 @@ return;
 
 }
 
-/* =========================================================
-   KPI CALCULATIONS
-========================================================= */
+/* ================= KPI ================= */
 
 const pfValues =
-data.map(x=>x.PF).filter(x=>!isNaN(x));
+data
+.map(x=>x.PF)
+.filter(x=>!isNaN(x));
 
 const avgPF =
 pfValues.reduce((a,b)=>a+b,0)
@@ -582,10 +607,6 @@ lowPFCount;
 const estimatedPenalty =
 (lowPFDuration * 12).toFixed(0);
 
-/* =========================================================
-   UPDATE KPI
-========================================================= */
-
 document.getElementById("avgPF").innerHTML =
 avgPF.toFixed(3);
 
@@ -598,24 +619,23 @@ lowPFDuration;
 document.getElementById("penalty").innerHTML =
 estimatedPenalty;
 
-/* =========================================================
-   STATUS
-========================================================= */
+/* ================= STATUS ================= */
 
 document.getElementById("statusText").innerHTML =
-`${data.length} Samples Loaded`;
+data.length + " Samples Loaded";
 
-/* =========================================================
-   TREND CHART
-========================================================= */
+/* ================= TREND ================= */
 
 Plotly.newPlot("pfTrend",[
 
 {
 x:data.map(x=>new Date(x.ts)),
 y:data.map(x=>x.PF),
+
 name:"Power Factor",
+
 mode:"lines",
+
 line:{
 color:"#2563eb",
 width:2
@@ -625,9 +645,13 @@ width:2
 {
 x:data.map(x=>new Date(x.ts)),
 y:data.map(x=>x.ActPower),
+
 name:"Active Power",
-yaxis:"y2",
+
 mode:"lines",
+
+yaxis:"y2",
+
 line:{
 color:"#ef4444",
 width:2
@@ -674,9 +698,7 @@ responsive:true,
 displayModeBar:false
 }
 
-/* =========================================================
-   SCATTER
-========================================================= */
+/* ================= SCATTER ================= */
 
 );
 
@@ -729,9 +751,7 @@ responsive:true,
 displayModeBar:false
 }
 
-/* =========================================================
-   EVENT TABLE
-========================================================= */
+/* ================= TABLE ================= */
 
 );
 
@@ -748,7 +768,8 @@ if(row.PF < 0.90){
 status = "LOW PF";
 }
 
-const tr = document.createElement("tr");
+const tr =
+document.createElement("tr");
 
 tr.innerHTML = `
 
@@ -777,6 +798,9 @@ tbody.appendChild(tr);
 }catch(err){
 
 console.error(err);
+
+document.getElementById("statusText").innerHTML =
+"Error loading data";
 
 alert(err.message);
 
