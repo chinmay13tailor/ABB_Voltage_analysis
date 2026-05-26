@@ -271,8 +271,7 @@
     <div class="live-dot" title="Live data connection"></div>
     <span class="ctrl-label">Date</span>
     <input type="date" id="reportDate" class="date-input">
-    <button class="btn btn-primary" onclick="generateReport()">&#9654; Generate</button>
-    <button class="btn btn-secondary" id="tblBtn" onclick="toggleTable()">&#8862; Table</button>
+    <button class="btn btn-primary" onclick="generateReport()">Generate</button>
   </div>
   <div style="display:flex;gap:16px;align-items:center;">
     <span id="statusTs" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
@@ -393,27 +392,6 @@
     </div>
     <div class="anomaly-log" id="anomalyLog">
       <div class="empty-state"><div class="empty-icon">⚡</div>Generate a report to view anomaly events</div>
-    </div>
-  </div>
-
-  <!-- RAW TABLE -->
-  <div class="chart-card one-col tbl-show" id="rawTableCard" style="margin-top:14px;">
-    <div class="chart-header">
-      <span class="chart-title">Raw Data Table</span>
-      <span class="chart-meta" id="tblCount">—</span>
-    </div>
-    <div class="tbl-wrap">
-      <table id="rawTable">
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>V_RY</th><th>V_YB</th><th>V_BR</th><th>Avg LL</th>
-            <th>V_RN</th><th>V_YN</th><th>V_BN</th><th>Avg LN</th>
-            <th>Imb LL%</th><th>Imb LN%</th>
-          </tr>
-        </thead>
-        <tbody id="rawTbody"></tbody>
-      </table>
     </div>
   </div>
 
@@ -730,34 +708,6 @@ async function generateReport() {
     alert("Error fetching data: " + err.message);
   }
   showLoading(false);
-}
-
-// ── Table ────────────────────────────────────────────────────────────────
-function toggleTable() {
-  tableOpen = !tableOpen;
-  document.getElementById("rawTableCard").style.display = tableOpen ? "block" : "none";
-  document.getElementById("tblBtn").classList.toggle("active", tableOpen);
-  if (tableOpen && lastData.length) {
-    const {imbLL, imbLN} = analyse(lastData);
-    renderTable(lastData, imbLL, imbLN);
-  }
-}
-function renderTable(data, imbLL, imbLN) {
-  const tbody = document.getElementById("rawTbody");
-  document.getElementById("tblCount").textContent = `${data.length.toLocaleString()} rows`;
-  tbody.innerHTML = data.map((d,i) => `<tr>
-    <td>${new Date(d.ts).toLocaleString()}</td>
-    <td>${d.V_RY.toFixed(2)}</td><td>${d.V_YB.toFixed(2)}</td><td>${d.V_BR.toFixed(2)}</td>
-    <td>${d.AvLL.toFixed(2)}</td>
-    <td>${d.V_RN.toFixed(2)}</td><td>${d.V_YN.toFixed(2)}</td><td>${d.V_BN.toFixed(2)}</td>
-    <td>${d.AvLN.toFixed(2)}</td>
-    <td style="color:${imbLL[i]?.v>2?'var(--red)':imbLL[i]?.v>1?'var(--yellow)':'var(--green)'}">
-      ${imbLL[i]?.v.toFixed(2)||"—"}
-    </td>
-    <td style="color:${imbLN[i]?.v>2?'var(--red)':imbLN[i]?.v>1?'var(--yellow)':'var(--green)'}">
-      ${imbLN[i]?.v.toFixed(2)||"—"}
-    </td>
-  </tr>`).join("");
 }
 
 function showLoading(v) {
